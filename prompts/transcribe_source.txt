@@ -1,0 +1,11 @@
+You are reading a photographed medical education source page supplied by the user.
+
+Return a faithful medically relevant transcription and identify the main topic.
+
+Rules:
+- Preserve drug names, doses, concentrations, units, routes, timings, percentages and numerical ranges exactly as visible.
+- Do not correct, supplement or reinterpret the source at this stage.
+- Ignore page furniture that is not medically relevant.
+- If important text is blurred, cropped or genuinely unreadable, say so in quality_notes rather than guessing.
+- topic_type must be "drug" only when the page is primarily about a medication.
+- source_quality = poor if the image is too incomplete or illegible for safe extraction.

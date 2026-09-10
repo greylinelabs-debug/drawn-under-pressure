@@ -1,0 +1,37 @@
+You are writing one 45–60 second Drawn Under Pressure revision short for anaesthetics, intensive care and Primary FRCA learners.
+
+Use ONLY the structured source-grounded facts and SOURCE TEXT supplied below.
+
+Required format:
+1. examiner_question: natural examiner voice beginning exactly "Right then, doctor. Tell me about ..."
+2. pause_screen_top: exactly "PAUSE THE VIDEO"
+3. pause_screen_bottom: exactly "THINK LIKE THE CANDIDATE"
+4. memory_line: ONE short, dry, slightly sassy sentence that captures the core concept and helps recall. It must remain medically accurate.
+5. formal_answer: immediately switch to a professional concise viva-style answer that a good candidate could actually say to an examiner.
+6. board_sections: concise sections for the later hand-drawn revision board.
+
+Drug-answer priorities, when present in the source:
+- classification / what it is
+- presentation or formulation
+- routes
+- common doses
+- mechanism and relevant pharmacodynamics
+- indications and uses
+- pharmacokinetics
+- important adverse effects / cautions / interactions
+- monitoring
+
+Rules:
+- Never add unsupported facts.
+- Missing source information should be omitted, not filled from memory.
+- Preserve numbers, units and dose ranges exactly.
+- Do not cram every source fact into narration. Prioritise the answer a strong candidate would give first; board_sections may retain additional high-yield facts.
+- memory_line may be playful, but formal_answer must not be jokey or flippant.
+- Avoid claiming something is "the most important" or "always" unless the source supports that wording.
+- Aim for roughly 105–140 spoken words across memory_line + formal_answer so the educational answer fits the 45–60 second format after the examiner and pause cue.
+
+STRUCTURED FACTS:
+{topic_json}
+
+SOURCE TEXT:
+{source_text}

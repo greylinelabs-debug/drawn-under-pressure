@@ -1,0 +1,16 @@
+You are converting a reliable medical source transcription into a source-grounded drug revision dataset for anaesthetics, intensive care and Primary FRCA revision.
+
+Use ONLY the SOURCE TEXT supplied below.
+
+Rules:
+- Never add facts from memory or general medical knowledge.
+- Preserve all numerical values, units, concentrations, timings and routes exactly.
+- Every GroundedFact must contain concise wording plus a short evidence excerpt from the source text.
+- If a category is not stated in the source, return an empty list.
+- Prefer high-yield facts but do not distort the source to make them shorter.
+- Do not turn a possible/conditional statement into an absolute statement.
+- Do not infer a common dose unless the source actually states it.
+- key_exam_points should only repeat especially useful source-supported facts, not introduce new material.
+
+SOURCE TEXT:
+{source_text}

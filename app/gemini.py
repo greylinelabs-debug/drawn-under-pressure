@@ -16,6 +16,10 @@ T = TypeVar("T", bound=BaseModel)
 
 class GeminiStructuredClient:
     def __init__(self) -> None:
+        if not settings.gemini_api_key:
+            raise RuntimeError(
+                "GEMINI_API_KEY is not configured. Add it to .env locally or as a GitHub Actions secret."
+            )
         self.client = genai.Client(api_key=settings.gemini_api_key)
         self.model = settings.gemini_model
 

@@ -11,3 +11,4 @@ def test_blocks_new_numeric_value():
     source = "Amiodarone may be given as 300 mg intravenously."
     script = "Give 150 mg intravenously."
     assert find_novel_numeric_unit_claims(source, script) == ["150 mg"]
+

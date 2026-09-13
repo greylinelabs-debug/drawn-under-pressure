@@ -6,6 +6,7 @@ Rules:
 - Never add facts from memory or general medical knowledge.
 - Preserve all numerical values, units, concentrations, timings and routes exactly.
 - Every GroundedFact must contain concise wording plus a short evidence excerpt from the source text.
+- Evidence must be an exact contiguous excerpt (whitespace differences are allowed).
 - If a category is not stated in the source, return an empty list.
 - Prefer high-yield facts but do not distort the source to make them shorter.
 - Do not turn a possible/conditional statement into an absolute statement.

@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHONPATH: .
+      RUN_MEDIA_TESTS: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -17,6 +18,8 @@ jobs:
           python-version: '3.11'
       - name: Install dependencies
         run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg espeak-ng fonts-dejavu-core
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run tests

@@ -67,3 +67,4 @@ class QCReport(BaseModel):
     numeric_or_unit_issues: list[str] = Field(default_factory=list)
     missing_high_value_source_facts: list[str] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
+

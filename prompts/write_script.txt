@@ -27,6 +27,8 @@ Rules:
 - Preserve numbers, units and dose ranges exactly.
 - Do not cram every source fact into narration. Prioritise the answer a strong candidate would give first; board_sections may retain additional high-yield facts.
 - memory_line may be playful, but formal_answer must not be jokey or flippant.
+- Use at most 6 board sections, at most 14 bullets total, each at most 65 characters. Headings at most 35 characters. Do not truncate a clinical qualifier to fit; omit lower-priority facts instead.
+- Keep each spoken sentence under 150 characters for legible captions. Preserve all safety-critical qualifications.
 - Avoid claiming something is "the most important" or "always" unless the source supports that wording.
 - Aim for roughly 105–140 spoken words across memory_line + formal_answer so the educational answer fits the 45–60 second format after the examiner and pause cue.
 

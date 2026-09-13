@@ -1,0 +1,28 @@
+name: Drive intake
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+permissions:
+  contents: read
+concurrency:
+  group: drawn-under-pressure-drive
+  cancel-in-progress: false
+jobs:
+  batch:
+    if: vars.DRIVE_PIPELINE_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: sudo apt-get update && sudo apt-get install -y espeak-ng ffmpeg fonts-dejavu-core
+      - run: pip install -r requirements.txt
+      - name: Process bounded private batch
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_DRIVE_OAUTH_JSON: ${{ secrets.GOOGLE_DRIVE_OAUTH_JSON }}
+        run: python -m app.worker --limit 3

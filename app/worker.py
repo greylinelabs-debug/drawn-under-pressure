@@ -3,6 +3,7 @@ import argparse
 import json
 import tempfile
 import zipfile
+import hashlib
 from pathlib import Path
 from app.drive import Drive
 from app.main import run
@@ -44,6 +45,10 @@ def batch(drive, folders, limit=3, processor=run):
                     raise ValueError('Unsupported source image format')
                 image = root / ('source'+suffix)
                 drive.download(file_id, image)
+                source_checksum = hashlib.md5(image.read_bytes()).hexdigest()
+                remote_checksum = drive.get(file_id).get('md5Checksum')
+                if remote_checksum and remote_checksum != source_checksum:
+                    raise RuntimeError('Source changed during download')
                 from PIL import Image
                 with Image.open(image) as source:
                     source.verify()
@@ -71,6 +76,9 @@ def batch(drive, folders, limit=3, processor=run):
                 drive.move(file_id, folders['Processing'], folders['Failed'])
                 results.append('failed')
                 continue
+            current_checksum = drive.get(file_id).get('md5Checksum')
+            if current_checksum and current_checksum != source_checksum:
+                raise RuntimeError('Source changed during generation; retain Processing')
             drive.upload_package(out/'episode.zip', folders['Finished'], file_id)
             drive.move(file_id, folders['Processing'], folders['Finished'])
             results.append('finished')
@@ -91,3 +99,4 @@ def main():
 
 if __name__ == '__main__':
     raise SystemExit(main())
+

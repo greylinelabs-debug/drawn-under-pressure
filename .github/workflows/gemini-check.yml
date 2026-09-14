@@ -24,12 +24,12 @@ jobs:
           payload = {
               "contents": [{"parts": [{"text": "Reply with OK only."}]}],
               "generationConfig": {
-                  "maxOutputTokens": 16,
-                  "thinkingConfig": {"thinkingBudget": 0}
+                  "maxOutputTokens": 128,
+                  "thinkingConfig": {"thinkingLevel": "minimal"}
               }
           }
           request = urllib.request.Request(
-              "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+              "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
               data=json.dumps(payload).encode(),
               headers={"x-goog-api-key": key, "Content-Type": "application/json"})
           try:

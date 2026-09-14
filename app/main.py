@@ -13,12 +13,14 @@ def _write_json(path: Path, payload: dict) -> None:
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def run(image_path: str | Path, out_dir: str | Path | None = None) -> int:
+def run(image_path: str | Path, out_dir: str | Path | None = None, *, render: bool = True) -> int:
     image_path = Path(image_path)
     if not image_path.exists():
         raise FileNotFoundError(image_path)
 
     out = Path(out_dir) if out_dir else settings.output_dir / image_path.stem
+    if out.exists() and any(out.iterdir()):
+        raise ValueError('Use a fresh output directory to avoid stale successful artifacts')
     out.mkdir(parents=True, exist_ok=True)
 
     pipeline = ExtractionPipeline()
@@ -27,7 +29,7 @@ def run(image_path: str | Path, out_dir: str | Path | None = None) -> int:
     source = pipeline.transcribe_source(image_path)
     _write_json(out / "source.json", source.model_dump())
 
-    if source.source_quality == "poor":
+    if source.source_quality != "good":
         report = {
             "status": "blocked_source_quality",
             "source_quality": source.source_quality,
@@ -43,9 +45,12 @@ def run(image_path: str | Path, out_dir: str | Path | None = None) -> int:
     script = pipeline.write_script(source, topic)
     _write_json(out / "script.json", script.model_dump())
 
-    qc = qc_engine.review(source, topic, script)
+    qc = qc_engine.review(source, topic, script, image_path=image_path)
     _write_json(out / "qc.json", qc.model_dump())
 
+    if qc.status == 'ready_for_render' and render:
+        from app.package import render_package
+        render_package(source, topic, script, qc, out)
     print(f"Topic: {topic.topic}")
     print(f"QC status: {qc.status}")
     print(f"Output: {out.resolve()}")
@@ -56,8 +61,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Create a source-grounded Drawn Under Pressure episode package from a photographed drug page.")
     parser.add_argument("image", help="Path to source page image")
     parser.add_argument("--out", help="Output directory")
+    parser.add_argument('--extract-only', action='store_true')
     args = parser.parse_args()
-    raise SystemExit(run(args.image, args.out))
+    raise SystemExit(run(args.image, args.out, render=not args.extract_only))
 
 
 if __name__ == "__main__":

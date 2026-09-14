@@ -7,3 +7,9 @@ outputs/
 *.pyo
 *.pyd
 .DS_Store
+credentials*.json
+token*.json
+work/
+*.wav
+*.mp4
+*.zip

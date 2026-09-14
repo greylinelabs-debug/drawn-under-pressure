@@ -4,3 +4,5 @@ pydantic-settings>=2.4.0
 python-dotenv>=1.0.1
 Pillow>=10.4.0
 pytest>=8.3.0
+google-api-python-client>=2.150,<3
+imageio-ffmpeg>=0.6,<0.7

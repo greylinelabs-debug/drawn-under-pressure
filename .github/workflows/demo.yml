@@ -1,0 +1,36 @@
+name: Render synthetic style demo
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/cloud-pipeline-v03]
+    paths:
+      - 'app/render.py'
+      - 'app/scene.py'
+      - 'app/video.py'
+      - 'app/demo.py'
+      - '.github/workflows/demo.yml'
+permissions:
+  contents: read
+jobs:
+  demo:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update && sudo apt-get install -y espeak-ng ffmpeg fonts-dejavu-core
+      - run: pip install -r requirements.txt
+      - run: python -m app.demo --out outputs/style-demo
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-style-demo
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            outputs/style-demo/video.mp4
+            outputs/style-demo/board.png
+            outputs/style-demo/script.txt
+            outputs/style-demo/captions.srt
+            outputs/style-demo/demo.json

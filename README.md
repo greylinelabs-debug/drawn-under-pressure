@@ -32,6 +32,16 @@ Set GEMINI_API_KEY in the environment or ignored .env. Use --extract-only to ski
 3. Set repository variable DRIVE_PIPELINE_ENABLED=true. The workflow checks every six hours, at most three items per run; manual dispatch is also available.
 4. Upload readable JPEG, PNG or WebP images up to 20 MiB to Inbox.
 
+The one-time OAuth helper turns Google's downloaded Desktop client file into the authorized-user JSON expected by the worker. It opens Google's consent page locally and never prints the token:
+
+```sh
+python scripts/authorize_drive.py /path/to/downloaded-client.json
+```
+
+Add the entire generated `drive-authorized-user.json` file as the `GOOGLE_DRIVE_OAUTH_JSON` Actions secret, then securely delete that local file. The helper refuses to overwrite an existing credential file.
+
+The `Live Gemini fictional smoke test` workflow exercises image transcription, structured extraction, script writing, independent image QC, rendering, speech and video assembly using an explicitly fictional card. Its artifacts contain no real medical source material. It is a credential and compatibility test; it does not replace acceptance testing with a trusted medical source.
+
 The connected ChatGPT Drive account does not export credentials to GitHub Actions. Separate Google OAuth consent is required for unattended execution. Authorized-user OAuth is the default for personal My Drive. Configure the OAuth app for ongoing use; testing-mode refresh tokens can expire.
 
 Successful source files move to Finished beside source-id.zip. QC and format failures move to Failed with a private report. Infrastructure failures leave sources in Processing for retry. Exactly one worker is supported: preserve the Actions concurrency group and do not run a local worker concurrently. Drive moves are not a distributed lock.

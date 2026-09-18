@@ -2,7 +2,7 @@ name: Live Gemini fictional smoke test
 on:
   workflow_dispatch:
   push:
-    branches: [codex/cloud-pipeline-v03]
+    branches: [main]
     paths:
       - 'app/smoke.py'
       - 'app/gemini.py'

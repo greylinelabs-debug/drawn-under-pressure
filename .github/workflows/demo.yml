@@ -2,7 +2,7 @@ name: Render synthetic style demo
 on:
   workflow_dispatch:
   push:
-    branches: [codex/cloud-pipeline-v03]
+    branches: [main]
     paths:
       - 'app/render.py'
       - 'app/scene.py'

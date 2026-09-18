@@ -43,3 +43,4 @@ class GeminiStructuredClient:
         if not response.text:
             raise RuntimeError("Gemini returned an empty response")
         return schema.model_validate_json(response.text)
+

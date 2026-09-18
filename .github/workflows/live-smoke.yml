@@ -1,0 +1,44 @@
+name: Live Gemini fictional smoke test
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/cloud-pipeline-v03]
+    paths:
+      - 'app/smoke.py'
+      - 'app/gemini.py'
+      - 'app/pipeline.py'
+      - 'app/qc.py'
+      - 'prompts/**'
+      - '.github/workflows/live-smoke.yml'
+permissions:
+  contents: read
+concurrency:
+  group: drawn-under-pressure-live-smoke
+  cancel-in-progress: false
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: sudo apt-get update && sudo apt-get install -y espeak-ng ffmpeg fonts-dejavu-core
+      - run: pip install -r requirements.txt
+      - name: Run fictional end-to-end pipeline
+        run: python -m app.smoke
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: live-fictional-smoke
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            outputs/live-smoke/episode/video.mp4
+            outputs/live-smoke/episode/board.png
+            outputs/live-smoke/episode/qc.json
+            outputs/live-smoke/episode/manifest.json

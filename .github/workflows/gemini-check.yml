@@ -1,0 +1,47 @@
+name: Gemini connection check
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/cloud-pipeline-v03]
+    paths: [.github/workflows/gemini-check.yml]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Check key and make one bounded request
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        shell: python
+        run: |
+          import json, os, urllib.request, urllib.error
+          key = os.environ.get("GEMINI_API_KEY", "")
+          if not key:
+              print("GEMINI_API_KEY is missing or empty.")
+              raise SystemExit(1)
+          payload = {
+              "contents": [{"parts": [{"text": "Reply with OK only."}]}],
+              "generationConfig": {
+                  "maxOutputTokens": 128,
+                  "thinkingConfig": {"thinkingLevel": "minimal"}
+              }
+          }
+          request = urllib.request.Request(
+              "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
+              data=json.dumps(payload).encode(),
+              headers={"x-goog-api-key": key, "Content-Type": "application/json"})
+          try:
+              with urllib.request.urlopen(request, timeout=45) as response:
+                  result = json.load(response)
+              if not result.get("candidates"):
+                  print("API responded but returned no candidate.")
+                  raise SystemExit(1)
+              print("Gemini key accepted; model connection successful.")
+          except urllib.error.HTTPError as error:
+              print("Gemini connection failed: HTTP " + str(error.code))
+              raise SystemExit(1)
+          except Exception:
+              print("Gemini connection failed: network or response error.")
+              raise SystemExit(1)

@@ -9,3 +9,4 @@ Rules:
 - If important text is blurred, cropped or genuinely unreadable, say so in quality_notes rather than guessing.
 - topic_type must be "drug" only when the page is primarily about a medication.
 - source_quality = poor if the image is too incomplete or illegible for safe extraction.
+

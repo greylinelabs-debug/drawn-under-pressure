@@ -7,3 +7,10 @@ outputs/
 *.pyo
 *.pyd
 .DS_Store
+credentials*.json
+token*.json
+drive-authorized-user.json
+work/
+*.wav
+*.mp4
+*.zip

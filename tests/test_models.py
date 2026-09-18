@@ -12,3 +12,4 @@ def test_locked_pause_copy():
     )
     assert script.pause_screen_top == "PAUSE THE VIDEO"
     assert script.pause_screen_bottom == "THINK LIKE THE CANDIDATE"
+

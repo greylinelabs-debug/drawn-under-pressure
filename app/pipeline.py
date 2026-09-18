@@ -31,3 +31,4 @@ class ExtractionPipeline:
             source_text=source.source_text,
         )
         return self.client.generate(prompt, ScriptPackage)
+

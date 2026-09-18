@@ -44,7 +44,19 @@ Automated QC establishes source fidelity, not medical correctness. Numeric match
 
 Layout or timing failures require a shorter source-grounded script and repeated QC. No outside supplementation, silent rewriting or automatic public video publishing is enabled.
 
-Recovery: inspect Failed privately, fix the source and move it back to Inbox. For a changed source with the same ID, archive its old ZIP elsewhere before retrying; different packages are never silently overwritten. Processing recovery trusts a verified marker matching the current source checksum. No source or generated output is uploaded as a public Actions artifact.
+Recovery: inspect Failed privately, fix the source and move it back to Inbox. For a changed source with the same ID, archive its old ZIP elsewhere before retrying; different packages are never silently overwritten. Processing recovery checks the source version and uploaded package checksum, including interruption before the final verification marker. Medical source material and generated medical output are never uploaded as public Actions artifacts.
+
+## Watch the synthetic presentation demo
+
+The `Render synthetic style demo` workflow creates a spoken 45–60 second preview with no credentials and no medical claims. Download its `synthetic-style-demo` artifact from the Actions run. These explicitly labelled synthetic files are safe to share and are retained for 14 days.
+
+```sh
+python -m app.demo --out outputs/style-demo
+```
+
+The preview includes a full-screen examiner question, a pause screen, a memory hook, progressive sketch-style panels and a final recall board. It uses the free eSpeak NG voice, which remains noticeably synthetic. It is a style demonstration, not medical acceptance testing. Generic frames and marks are decorative; medical illustrations have not been introduced without sources.
+
+Caption chunks preserve the script's words, while speech clips are padded to video-frame boundaries. Lossless intermediate audio avoids encoder padding accumulating between clips. A final decode and duration check guards the assembled MP4.
 
 ## Validation
 

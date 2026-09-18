@@ -1,5 +1,5 @@
 """Drive adapter. OAuth credentials are supplied only through the environment."""
-import io
+import hashlib
 import json
 import os
 import re
@@ -62,26 +62,33 @@ class Drive:
     def upload_package(self, path, parent, source_id):
         # Stable name enables recovery if upload succeeded but the final source move failed.
         name = identifier(source_id) + '.zip'
+        checksum = hashlib.md5(Path(path).read_bytes()).hexdigest()
+        source_checksum = self.get(source_id).get('md5Checksum', '')
+        if not source_checksum:
+            raise RuntimeError('Source checksum unavailable')
         matches = [f for f in self.list(parent) if f['name'] == name]
         if len(matches) > 1:
             raise RuntimeError('Duplicate output packages require review')
         if matches:
             metadata = self.get(matches[0]['id'])
-            import hashlib
-            if metadata.get('md5Checksum') != hashlib.md5(Path(path).read_bytes()).hexdigest():
+            if metadata.get('md5Checksum') != checksum:
                 raise RuntimeError('Existing package differs; retain Processing for recovery')
+            if metadata.get('appProperties',{}).get('sourceChecksum') != source_checksum:
+                raise RuntimeError('Existing package is for a different source version')
             return matches[0]['id']
-        request = self.service.files().create(body={'name':name,'parents':[parent]},
+        request = self.service.files().create(body={'name':name,'parents':[parent],
+            'appProperties':{'dupExpectedMD5':checksum,'sourceChecksum':source_checksum}},
             media_body=MediaFileUpload(str(path), mimetype='application/zip', resumable=True),
             fields='id', supportsAllDrives=True)
         response = None
         while response is None:
             _, response = request.next_chunk(num_retries=3)
-        import hashlib
         metadata = self.get(response['id'])
-        if metadata.get('md5Checksum') != hashlib.md5(Path(path).read_bytes()).hexdigest():
+        if metadata.get('md5Checksum') != checksum:
             raise RuntimeError('Uploaded package checksum mismatch')
+        if self.get(source_id).get('md5Checksum') != source_checksum:
+            raise RuntimeError('Source changed during upload')
         self.service.files().update(fileId=response['id'], body={'appProperties':{
-            'dupVerified':'true', 'sourceChecksum':self.get(source_id).get('md5Checksum','')}},
+            'dupVerified':'true', 'sourceChecksum':source_checksum, 'dupExpectedMD5':checksum}},
             fields='id', supportsAllDrives=True).execute(num_retries=3)
         return response['id']

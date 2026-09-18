@@ -4,6 +4,8 @@ import json
 import tempfile
 import zipfile
 import hashlib
+import contextlib
+import io
 from pathlib import Path
 from app.drive import Drive
 from app.main import run
@@ -32,7 +34,10 @@ def batch(drive, folders, limit=3, processor=run):
                     package = drive.get(existing[0]['id'])
                     props = package.get('appProperties', {})
                     checksum = drive.get(file_id).get('md5Checksum')
-                    if props.get('dupVerified') != 'true' or not checksum or props.get('sourceChecksum') != checksum:
+                    verified = props.get('dupVerified') == 'true'
+                    # Upload completed but runner stopped before recording its final marker.
+                    verified = verified or bool(package.get('md5Checksum') and props.get('dupExpectedMD5') == package['md5Checksum'])
+                    if not verified or not checksum or props.get('sourceChecksum') != checksum:
                         raise RuntimeError('Existing package provenance not verified')
                     drive.move(file_id, folders['Processing'], folders['Finished'])
                     results.append('recovered')
@@ -53,7 +58,9 @@ def batch(drive, folders, limit=3, processor=run):
                 with Image.open(image) as source:
                     source.verify()
                 out = root/'episode'
-                status = processor(image, out)
+                # Public Actions logs must not contain titles or model-generated source text.
+                with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                    status = processor(image, out)
                 if status:
                     raise ValueError('Source or content QC blocked this episode')
                 # Do not classify an upload/move interruption as a content failure.
@@ -99,4 +106,3 @@ def main():
 
 if __name__ == '__main__':
     raise SystemExit(main())
-
